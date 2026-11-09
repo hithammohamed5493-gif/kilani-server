@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سوق الكيلاني | Souq El Kilany</title>
+<!-- حط كود اللوجو هنا -->
+<meta name="description" content="سوق الكيلاني AK">
+<link rel="icon" href="logo.png">
+<meta property="og:title" content="سوق الكيلاني AK">
+<meta property="og:description" content="اشتري شباشب، ملابس، موبايلات واحذية بأحسن سعر">
+<meta property="og:image" content="https://kilani-server-1.onrender.com/logo.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 _{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
 body{background:#f7f7f7;color:#0a2e4f}
@@ -140,13 +148,80 @@ input[type=text],input[type=email],input[type=password]{width:100%;padding:14px;
 
 <script>
 let currentLang='ar';
+const T = {
+ar: {
+  welcome: "سوق الكيلاني",
+  choose: "اختر لغتك / Choose Your Language",
+  arBtn: "🇪🇬 العربية",
+  enBtn: "🇺🇸 English",
+  cont: "استمرار / Continue",
+  note: "يمكنك تغيير اللغة لاحقاً من الإعدادات",
+  search: "دور على اللي نفسك فيه",
+  all: "الكل", slippers: "شباشب", clothes: "ملابس", phones: "موبايلات", shoes: "أحذية", ps: "بلايستيشن",
+  best: "الأكثر مبيعاً", viewAll: "عرض الكل",
+  wa: "💬 كلم المطور على واتساب",
+  home: "🏠 الرئيسية", sell: "بيع حاجة عندنا", searchBtn: "🔍 البحث", account: "👤 حسابي",
+  sellTitle: "لإضافة منتج تحدث مع المطور",
+  sellP: "عايز تبيع عندنا؟ كلمنا وهننزل منتجك في السوق",
+  back: "رجوع للرئيسية",
+  p1: "شبشب جلد طبيعي", p2: "حذاء رياضي مريح", p3: "دراع بلايستيشن 5", p4: "تيشيرت قطن أسود"
+},
+en: {
+  welcome: "Souq El Kilany",
+  choose: "Choose Your Language / اختر لغتك",
+  arBtn: "🇪🇬 Arabic",
+  enBtn: "🇺🇸 English",
+  cont: "Continue / استمرار",
+  note: "You can change language later in settings",
+  search: "Search for what you want",
+  all: "All", slippers: "Slippers", clothes: "Clothes", phones: "Mobiles", shoes: "Shoes", ps: "PlayStation",
+  best: "Best Sellers", viewAll: "View All",
+  wa: "💬 Chat with developer on WhatsApp",
+  home: "🏠 Home", sell: "Sell With Us", searchBtn: "🔍 Search", account: "👤 My Account",
+  sellTitle: "To add a product talk to developer",
+  sellP: "Want to sell with us? Contact us and we will list your product",
+  back: "Back to Home",
+  p1: "Natural Leather Slipper", p2: "Comfortable Sport Shoes", p3: "PlayStation 5 Controller", p4: "Black Cotton T-Shirt"
+}
+};
+
+function applyLang(){
+  let t = T[currentLang];
+  document.querySelector('#langScreen h2').innerHTML = t.welcome;
+  document.querySelector('#langScreen p').innerText = t.choose;
+  document.querySelectorAll('#langScreen .big-btn')[0].innerText = t.arBtn;
+  document.querySelectorAll('#langScreen .big-btn')[1].innerText = t.enBtn;
+  document.querySelectorAll('#langScreen .big-btn')[2].innerText = t.cont;
+  document.querySelector('#langScreen .small').innerText = t.note;
+  document.getElementById('searchInput').placeholder = t.search;
+  let cats = document.querySelectorAll('.cats button');
+  if(cats.length>=6){ cats[0].innerText=t.all; cats[1].innerText=t.slippers; cats[2].innerText=t.clothes; cats[3].innerText=t.phones; cats[4].innerText=t.shoes; cats[5].innerText=t.ps; }
+  document.querySelector('.section h2').innerText = t.best;
+  document.querySelector('.section a').innerText = t.viewAll;
+  document.querySelector('.whatsapp').innerText = t.wa;
+  let bot = document.querySelectorAll('.bottom button');
+  if(bot.length>=4){ bot[0].innerText=t.home; bot[1].innerText=t.sell; bot[2].innerText=t.searchBtn; bot[3].innerText=t.account; }
+  document.querySelector('#sellScreen h2').innerText = t.sellTitle;
+  document.querySelector('#sellScreen p').innerText = t.sellP;
+  document.querySelector('#sellScreen .big-btn:last-child').innerText = t.back;
+  let cards = document.querySelectorAll('.card h3');
+  if(cards.length>=4){ cards[0].innerText=t.p1; cards[1].innerText=t.p2; cards[2].innerText=t.p3; cards[3].innerText=t.p4; }
+}
+
 function selectLang(l){ currentLang=l; document.getElementById('btnAR').classList.toggle('active',l==='ar'); document.getElementById('btnEN').classList.toggle('active',l==='en'); }
-function setLang(l){ selectLang(l); document.documentElement.lang=l; document.documentElement.dir=l==='ar'?'rtl':'ltr'; }
+function setLang(l){ selectLang(l); document.documentElement.lang=l; document.documentElement.dir=l==='ar'?'rtl':'ltr'; applyLang(); }
 function goAccount(){ document.getElementById('langScreen').classList.add('hidden'); document.getElementById('accountModal').classList.remove('hidden'); }
 function closeModal(){ document.getElementById('accountModal').classList.add('hidden'); goHome(); }
 function openSignup(){ document.getElementById('accountModal').classList.add('hidden'); document.getElementById('langScreen').classList.add('hidden'); document.getElementById('homeScreen').classList.add('hidden'); document.getElementById('sellScreen').classList.add('hidden'); document.getElementById('signupScreen').classList.remove('hidden'); }
-function goHome(){ document.getElementById('langScreen').classList.add('hidden'); document.getElementById('accountModal').classList.add('hidden'); document.getElementById('signupScreen').classList.add('hidden'); document.getElementById('sellScreen').classList.add('hidden'); document.getElementById('homeScreen').classList.remove('hidden'); window.scrollTo(0,0); }
-function openSell(){ document.getElementById('homeScreen').classList.add('hidden'); document.getElementById('sellScreen').classList.remove('hidden'); window.scrollTo(0,0); }
-</script>
+function goHome(){ document.getElementById('langScreen').classList.add('hidden'); document.getElementById('accountModal').classList.add('hidden'); document.getElementById('signupScreen').classList.add('hidden'); document.getElementById('sellScreen').classList.add('hidden'); document.getElementById('homeScreen').classList.remove('hidden'); window.scrollTo(0,0); applyLang(); }
+function openSell(){ document.getElementById('homeScreen').classList.add('hidden'); document.getElementById('sellScreen').classList.remove('hidden'); window.scrollTo(0,0); applyLang(); }
+function doSearch(){
+  let q = document.getElementById('searchInput').value.trim();
+  let cards = document.querySelectorAll('.card');
+  cards.forEach(c => {
+    let name = c.querySelector('h3').innerText;
+    c.style.display = (name.includes(q) || q === '') ? 'block' : 'none';
+  });
+}</script>
 </body>
 </html>

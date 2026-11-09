@@ -10,15 +10,13 @@
     :root {
       --primary-color: #2563eb;
       --primary-hover: #1d4ed8;
-      --whatsapp-color: #25d366;
-      --whatsapp-hover: #1ebd59;
       --bg-color: #f8fafc;
       --card-bg: #ffffff;
       --text-color: #0f172a;
       --subtext-color: #64748b;
       --border-color: #e2e8f0;
       --success-color: #16a34a;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
@@ -31,27 +29,30 @@
       display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
     }
     .modal-card {
-      background: var(--card-bg); border-radius: 16px; padding: 2rem;
-      width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow);
+      background: var(--card-bg); border-radius: 16px; padding: 1.5rem;
+      width: 100%; max-width: 450px; text-align: center; box-shadow: var(--shadow);
     }
     .modal-card h2 { margin-bottom: 0.5rem; color: var(--primary-color); }
-    .modal-card p { color: var(--subtext-color); margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .modal-card p { color: var(--subtext-color); margin-bottom: 1.2rem; font-size: 0.9rem; }
 
-    .btn-group { display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn-group { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
     .btn {
       padding: 0.85rem 1.5rem; border-radius: 10px; border: 1px solid var(--border-color);
       background: white; color: var(--text-color); font-weight: 700; cursor: pointer;
       transition: all 0.2s ease; font-size: 1rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      text-decoration: none;
     }
     .btn:hover { background: #f1f5f9; }
     .btn-primary { background: var(--primary-color); color: white; border: none; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    
-    .btn-whatsapp { background: var(--whatsapp-color); color: white; border: none; }
-    .btn-whatsapp:hover { background: var(--whatsapp-hover); }
-
     .hidden { display: none !important; }
+
+    /* Forms */
+    .form-group { margin-bottom: 1rem; text-align: right; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.3rem; }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 0.9rem;
+    }
+    .form-row { display: flex; gap: 0.75rem; }
+    .form-row .form-group { flex: 1; }
 
     /* Header */
     header { background: var(--card-bg); padding: 1rem; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
@@ -62,13 +63,24 @@
     .tab-content { display: none; padding: 1.5rem; max-width: 600px; margin: 0 auto; }
     .tab-content.active { display: block; }
 
-    /* Home Search */
+    /* Home & Products Grid */
     .home-search-area { margin-bottom: 1.5rem; }
     .search-box { display: flex; gap: 0.5rem; }
     .search-box input { flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; outline: none; }
-    .search-results-box { margin-top: 1rem; background: white; border-radius: 12px; padding: 1rem; border: 1px solid var(--border-color); }
+    
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin-top: 1rem;
+    }
+    .product-card {
+      background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; text-align: right;
+    }
+    .product-card h4 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--text-color); }
+    .product-price { color: var(--primary-color); font-weight: bold; font-size: 0.95rem; }
+    .product-stock { font-size: 0.8rem; color: var(--success-color); font-weight: bold; margin-top: 0.2rem; }
+    .product-desc { font-size: 0.85rem; color: var(--subtext-color); margin: 0.5rem 0; line-height: 1.4; }
+    .product-vendor { font-size: 0.75rem; color: var(--subtext-color); border-top: 1px dashed var(--border-color); padding-top: 0.4rem; }
 
-    /* Profile Header */
+    /* Vendor Dashboard Box */
     .user-profile-header {
       display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--card-bg);
       border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 1.5rem;
@@ -81,12 +93,11 @@
     .account-name { font-weight: 700; }
     .account-email { font-size: 0.85rem; color: var(--subtext-color); }
 
-    .account-menu { display: flex; flex-direction: column; gap: 0.75rem; }
-    .menu-item {
-      display: flex; align-items: center; justify-content: space-between; padding: 1rem;
-      background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; font-weight: 500;
+    .vendor-card {
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; text-align: right;
     }
-    .menu-item.danger { color: #ef4444; border-color: #fecaca; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
+    .badge-success { background: #dcfce7; color: #166534; }
 
     /* Bottom Nav */
     .bottom-nav {
@@ -99,44 +110,40 @@
       cursor: pointer; color: var(--subtext-color); border: none; background: none; font-size: 0.8rem; gap: 4px;
     }
     .nav-item.active { color: var(--primary-color); font-weight: 700; }
-    .nav-item.center-btn { position: relative; }
-    .nav-item.center-btn .icon-box {
-      background: var(--primary-color); color: white; width: 55px; height: 55px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; position: absolute; top: -25px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); border: 4px solid var(--card-bg);
-    }
-    .nav-item.center-btn span { margin-top: 32px; }
   </style>
 </head>
 <body>
 
-  <!-- Modal 1: Select Language -->
-  <div id="lang-modal" class="modal-overlay">
+  <!-- Modal: Add Product (شاشة إضافة المنتج المحدثة) -->
+  <div id="add-product-modal" class="modal-overlay hidden">
     <div class="modal-card">
-      <h2>سوق الكيلاني</h2>
-      <p>الرجاء اختيار اللغة / Please select language</p>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="setLanguage('ar')">العربية</button>
-        <button class="btn" onclick="setLanguage('en')">English</button>
+      <h2>إضافة منتج جديد لمتجرك</h2>
+      <p>أدخل بيانات المنتج والكمية المتاحة لترويجها للزبائن</p>
+      
+      <div class="form-group">
+        <label>اسم المنتج</label>
+        <input type="text" id="prod-name" placeholder="مثال: هاتف سامسونج A54">
       </div>
-    </div>
-  </div>
 
-  <!-- Modal 2: Entry Type (Vendor vs Buyer) -->
-  <div id="entry-modal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <h2 id="entry-title">أهلاً بك في سوق الكيلاني</h2>
-      <p id="entry-desc">الرجاء تحديد نوع الحساب للمتابعة</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>السعر (ج.م)</label>
+          <input type="number" id="prod-price" placeholder="1000">
+        </div>
+        <div class="form-group">
+          <label>الكمية المتاحة</label>
+          <input type="number" id="prod-stock" placeholder="10">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>الوصف وتفاصيل المنتج</label>
+        <textarea id="prod-desc" rows="3" placeholder="اكتب وصف المنتج والضمان واللون وكل التفاصيل التي تود توضيحها للزبون..."></textarea>
+      </div>
+
       <div class="btn-group">
-        <!-- Vendor Option -> Direct to WhatsApp -->
-        <a href="https://wa.me/201092242890?text=مرحباً، أريـد الانضمام كبائع/تاجر في سوق الكيلاني" target="_blank" class="btn btn-whatsapp" onclick="handleVendorClick()">
-          🏪 <span id="btn-vendor-text">بائع / تاجر (تواصل عبر واتساب)</span>
-        </a>
-        
-        <!-- Buyer Option -> Direct to Home -->
-        <button class="btn btn-primary" onclick="handleBuyerClick()">
-          👤 <span id="btn-buyer-text">زبون (دخول للقائمة الرئيسية)</span>
-        </button>
+        <button class="btn btn-primary" onclick="saveVendorProduct()">حفظ ونشر المنتج</button>
+        <button class="btn" onclick="closeProductModal()">إلغاء</button>
       </div>
     </div>
   </div>
@@ -144,7 +151,7 @@
   <!-- Header -->
   <header>
     <div class="header-top">
-      <div class="brand-title" id="app-title">سوق الكيلاني</div>
+      <div class="brand-title">سوق الكيلاني</div>
     </div>
   </header>
 
@@ -152,165 +159,150 @@
   <main>
     <!-- Tab 1: Purchases -->
     <section id="tab-purchases" class="tab-content">
-      <h3 id="title-purchases">المشتريات</h3>
-      <div id="purchases-list" style="margin-top: 2rem; text-align: center; color: var(--subtext-color);">
+      <h3>المشتريات</h3>
+      <div style="margin-top: 2rem; text-align: center; color: var(--subtext-color);">
         لا توجد مشتريات حالياً.
       </div>
     </section>
 
-    <!-- Tab 2: Home (Search Lives Here Only) -->
-    <section id="tab-home" class="tab-content active">
+    <!-- Tab 2: Home -->
+    <section id="tab-home" class="tab-content">
       <div class="home-search-area">
         <div class="search-box">
-          <input type="text" id="search-input" placeholder="ابحث هنا عن منتجات..." onkeyup="handleSearchKey(event)">
-          <button class="btn btn-primary" style="width:auto;" onclick="performSearch()" id="search-btn">بحث</button>
-        </div>
-        <div id="search-results-container" class="search-results-box hidden">
-          <strong id="search-results-head">نتائج البحث عن:</strong>
-          <p id="search-output-text" style="margin-top: 0.5rem; color: var(--subtext-color); font-style:italic;"></p>
+          <input type="text" placeholder="ابحث هنا عن منتجات...">
+          <button class="btn btn-primary" style="width:auto;">بحث</button>
         </div>
       </div>
-
-      <h3 id="title-home">الرئيسية</h3>
-      <div id="home-placeholder" style="margin-top: 1rem; text-align: center; color: var(--subtext-color); padding: 2rem; border: 2px dashed var(--border-color); border-radius: 12px;">
-        أهلاً بك في سوق الكيلاني.<br>هذه هي الصفحة الرئيسية.
+      <h3>الرئيسية (معرض المنتجات)</h3>
+      <div id="products-container" class="products-grid">
+        <!-- المنتجات المعروضة تظهر هنا -->
       </div>
     </section>
 
     <!-- Tab 3: Account -->
-    <section id="tab-account" class="tab-content">
-      <h3 id="title-account" style="margin-bottom: 1rem;">حسابي</h3>
+    <section id="tab-account" class="tab-content active">
+      <h3 style="margin-bottom: 1rem;">حسابي</h3>
       
-      <div id="user-info-bar" class="user-profile-header">
-        <div class="account-avatar" id="user-avatar-char">ز</div>
+      <div class="user-profile-header">
+        <div class="account-avatar">م</div>
         <div class="account-info">
-          <div class="account-name" id="user-data-name">حساب زبون</div>
-          <div class="account-email" id="user-data-email">buyer@kilany.com</div>
+          <div class="account-name">متجر البركة</div>
+          <div class="account-email">vendor1@gmail.com</div>
         </div>
-        <div style="color: var(--success-color); font-size: 0.8rem; font-weight: bold;" id="status-tag">نشط</div>
+        <div style="color: var(--success-color); font-size: 0.8rem; font-weight: bold;">نشط</div>
       </div>
 
-      <div class="account-menu">
-        <div class="menu-item" onclick="accountAction('profile')">
-          <span id="opt-profile">بياناتي الشخصية</span>
-          <span>&rsaquo;</span>
+      <!-- Dashboard for Vendor -->
+      <div id="vendor-dashboard" class="vendor-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+          <strong>لوحة تحكم: متجر البركة</strong>
+          <span class="badge badge-success">اشتراك ساري</span>
         </div>
-        <div class="menu-item" onclick="accountAction('accounts')">
-          <span id="opt-accounts">الحسابات الأخرى</span>
-          <span>&rsaquo;</span>
-        </div>
-        <div class="menu-item" onclick="accountAction('add_account')">
-          <span id="opt-add-account">إضافة حساب آخر</span>
-          <span>+</span>
-        </div>
-        <div class="menu-item danger" onclick="accountAction('logout')">
-          <span id="opt-logout">تسجيل الخروج</span>
-          <span>&times;</span>
-        </div>
+        <p style="font-size: 0.85rem; color: var(--subtext-color); margin-bottom: 0.8rem;">
+          تاريخ انتهاء الاشتراك: 2026-12-31
+        </p>
+        <button class="btn btn-primary" onclick="openAddProductModal()">+ إضافة منتج جديد لصفحتي</button>
       </div>
     </section>
   </main>
 
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
-    <button class="nav-item" onclick="switchTab('purchases')" id="nav-purchases">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-      <span id="label-purchases">المشتريات</span>
+    <button class="nav-item" onclick="switchTab('purchases')">
+      <span>المشتريات</span>
     </button>
-    
-    <button class="nav-item center-btn active" onclick="switchTab('home')" id="nav-home">
-      <div class="icon-box">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-      </div>
-      <span id="label-home">الرئيسية</span>
+    <button class="nav-item" onclick="switchTab('home')">
+      <span>الرئيسية</span>
     </button>
-
-    <button class="nav-item" onclick="switchTab('account')" id="nav-account">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-      <span id="label-account">حسابي</span>
+    <button class="nav-item active" onclick="switchTab('account')">
+      <span>حسابي</span>
     </button>
   </nav>
 
   <script>
-    let currentLang = 'ar';
+    // قائمة الألفاظ غير اللائقة الممنوعة (يمكنك إضافة أي كلمات جديدة إليها بسهولة)
+    const badWordsList = [
+      "غش", "نصب", "حرامي", "احتيال", "كاذب", "زبالة", "سيء جدا", "كلب", "حمار"
+    ];
 
-    const translations = {
-      ar: {
-        appTitle: 'سوق الكيلاني',
-        entryTitle: 'أهلاً بك في سوق الكيلاني',
-        entryDesc: 'الرجاء تحديد نوع الحساب للمتابعة',
-        btnVendorText: 'بائع / تاجر (تواصل عبر واتساب)',
-        btnBuyerText: 'زبون (دخول للقائمة الرئيسية)',
-        searchPlaceholder: 'ابحث هنا عن منتجات...', searchBtn: 'بحث',
-        navPurchases: 'المشتريات', navHome: 'الرئيسية', navAccount: 'حسابي',
-        titlePurchases: 'المشتريات', titleHome: 'الرئيسية', titleAccount: 'حسابي',
-        noPurchases: 'لا توجد مشتريات حالياً.', homeWelcome: 'أهلاً بك في سوق الكيلاني.\nهذه هي الصفحة الرئيسية.',
-        searchResultsHead: 'نتائج البحث عن: ', optProfile: 'بياناتي الشخصية',
-        optAccounts: 'الحسابات الأخرى', optAddAccount: 'إضافة حساب آخر', optLogout: 'تسجيل الخروج',
-        alertLogout: 'تم تسجيل الخروج بنجاح.', alertAddAccount: 'توجه إلى صفحة إضافة حساب جديد...',
-        alertProfile: 'فتح بياناتي الشخصية...', alertAccounts: 'عرض قائمة الحسابات...',
-        statusActive: 'نشط', buyerName: 'حساب زبون'
-      },
-      en: {
-        appTitle: 'El-Kilany Market',
-        entryTitle: 'Welcome to El-Kilany Market',
-        entryDesc: 'Please select your account type',
-        btnVendorText: 'Vendor / Merchant (WhatsApp)',
-        btnBuyerText: 'Customer (Enter Home)',
-        searchPlaceholder: 'Search products here...', searchBtn: 'Search',
-        navPurchases: 'Purchases', navHome: 'Home', navAccount: 'Account',
-        titlePurchases: 'My Purchases', titleHome: 'Home Feed', titleAccount: 'Account Settings',
-        noPurchases: 'No purchases found.', homeWelcome: 'Welcome to El-Kilany Market.\nThis is your main feed.',
-        searchResultsHead: 'Search results for: ', optProfile: 'Personal Info',
-        optAccounts: 'Other Accounts', optAddAccount: 'Add Another Account', optLogout: 'Log Out',
-        alertLogout: 'Logged out successfully.', alertAddAccount: 'Redirecting to add account...',
-        alertProfile: 'Opening Personal Info...', alertAccounts: 'Showing accounts list...',
-        statusActive: 'Active', buyerName: 'Customer Account'
+    // دالة فحص وتصفية النصوص من الكلمات السيئة
+    function filterBadWords(text) {
+      let cleanedText = text;
+      badWordsList.forEach(word => {
+        const regex = new RegExp(word, "gi");
+        cleanedText = cleanedText.replace(regex, "***");
+      });
+      return cleanedText;
+    }
+
+    let allProducts = [
+      { 
+        name: "سماعة بلوتوث أصلية", 
+        price: 350, 
+        stock: 15,
+        desc: "سماعة صوت مجسم عالية الدقة مع بطارية تدوم حتى 24 ساعة وضمان لمدة سنة كاملة.", 
+        vendorName: "متجر البركة" 
       }
-    };
+    ];
 
-    function setLanguage(lang) {
-      currentLang = lang;
-      const htmlEl = document.documentElement;
-      htmlEl.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-      htmlEl.setAttribute('lang', lang);
+    function renderProducts() {
+      const container = document.getElementById('products-container');
+      container.innerHTML = '';
+      allProducts.forEach(p => {
+        container.innerHTML += `
+          <div class="product-card">
+            <h4>${p.name}</h4>
+            <div class="product-price">${p.price} ج.م</div>
+            <div class="product-stock">الكمية المتاحة: ${p.stock} قطعة</div>
+            <div class="product-desc">${p.desc}</div>
+            <div class="product-vendor">بواسطة: ${p.vendorName}</div>
+          </div>
+        `;
+      });
+    }
+    renderProducts();
 
-      const t = translations[lang];
-      document.getElementById('app-title').innerText = t.appTitle;
-      document.getElementById('entry-title').innerText = t.entryTitle;
-      document.getElementById('entry-desc').innerText = t.entryDesc;
-      document.getElementById('btn-vendor-text').innerText = t.btnVendorText;
-      document.getElementById('btn-buyer-text').innerText = t.btnBuyerText;
-      document.getElementById('search-input').placeholder = t.searchPlaceholder;
-      document.getElementById('search-btn').innerText = t.searchBtn;
-      document.getElementById('label-purchases').innerText = t.navPurchases;
-      document.getElementById('label-home').innerText = t.navHome;
-      document.getElementById('label-account').innerText = t.navAccount;
-      document.getElementById('title-purchases').innerText = t.titlePurchases;
-      document.getElementById('title-home').innerText = t.titleHome;
-      document.getElementById('title-account').innerText = t.titleAccount;
-      document.getElementById('purchases-list').innerText = t.noPurchases;
-      document.getElementById('home-placeholder').innerText = t.homeWelcome;
-      document.getElementById('opt-profile').innerText = t.optProfile;
-      document.getElementById('opt-accounts').innerText = t.optAccounts;
-      document.getElementById('opt-add-account').innerText = t.optAddAccount;
-      document.getElementById('opt-logout').innerText = t.optLogout;
-      document.getElementById('status-tag').innerText = t.statusActive;
-
-      // Close language modal and open entry selection modal
-      document.getElementById('lang-modal').classList.add('hidden');
-      document.getElementById('entry-modal').classList.remove('hidden');
+    function openAddProductModal() {
+      document.getElementById('add-product-modal').classList.remove('hidden');
     }
 
-    function handleVendorClick() {
-      // Closes or keeps modal open while WhatsApp opens in new tab
-      // Optionally we can close it:
-      // document.getElementById('entry-modal').classList.add('hidden');
-      // switchTab('home');
+    function closeProductModal() {
+      document.getElementById('add-product-modal').classList.add('hidden');
     }
 
-    function handleBuyerClick() {
-      document.getElementById('entry-modal').classList.add('hidden');
+    function saveVendorProduct() {
+      let name = document.getElementById('prod-name').value.trim();
+      const price = document.getElementById('prod-price').value;
+      const stock = document.getElementById('prod-stock').value || 1;
+      let desc = document.getElementById('prod-desc').value.trim();
+
+      if (!name || !price) {
+        alert("يرجى كتابة اسم المنتج والسعر على الأقل.");
+        return;
+      }
+
+      // فلترة الألفاظ والكلمات السيئة تلقائياً
+      name = filterBadWords(name);
+      desc = filterBadWords(desc);
+
+      allProducts.push({
+        name: name,
+        price: price,
+        stock: stock,
+        desc: desc || "لا يوجد وصف إضافي.",
+        vendorName: "متجر البركة"
+      });
+
+      renderProducts();
+      closeProductModal();
+
+      // إعادة تصفير الخانات
+      document.getElementById('prod-name').value = '';
+      document.getElementById('prod-price').value = '';
+      document.getElementById('prod-stock').value = '';
+      document.getElementById('prod-desc').value = '';
+
+      alert("تمت فلترة النص ونشر المنتج بنجاح في الصفحة الرئيسية!");
       switchTab('home');
     }
 
@@ -318,41 +310,7 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
-      document.getElementById(`nav-${tabName}`).classList.add('active');
-    }
-
-    function handleSearchKey(event) {
-      if (event.key === 'Enter') performSearch();
-    }
-
-    function performSearch() {
-      const query = document.getElementById('search-input').value.trim();
-      const container = document.getElementById('search-results-container');
-      const outputText = document.getElementById('search-output-text');
-      const head = document.getElementById('search-results-head');
-      const t = translations[currentLang];
-
-      if (query.length > 0) {
-        container.classList.remove('hidden');
-        head.innerText = t.searchResultsHead;
-        outputText.innerText = `"${query}"`;
-      } else {
-        container.classList.add('hidden');
-      }
-    }
-
-    function accountAction(action) {
-      const t = translations[currentLang];
-      if (action === 'logout') {
-        alert(t.alertLogout);
-        document.getElementById('entry-modal').classList.remove('hidden');
-      } else if (action === 'add_account') {
-        alert(t.alertAddAccount);
-      } else if (action === 'profile') {
-        alert(t.alertProfile);
-      } else if (action === 'accounts') {
-        alert(t.alertAccounts);
-      }
+      event.currentTarget.classList.add('active');
     }
   </script>
 </body>

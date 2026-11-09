@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>سوق الكيلاني | El-Kilany Market</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <style>
     :root {
@@ -29,13 +30,13 @@
       display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
     }
     .modal-card {
-      background: var(--card-bg); border-radius: 16px; padding: 1.5rem;
-      width: 100%; max-width: 450px; text-align: center; box-shadow: var(--shadow);
+      background: var(--card-bg); border-radius: 16px; padding: 2rem;
+      width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow);
     }
     .modal-card h2 { margin-bottom: 0.5rem; color: var(--primary-color); }
-    .modal-card p { color: var(--subtext-color); margin-bottom: 1.2rem; font-size: 0.9rem; }
+    .modal-card p { color: var(--subtext-color); margin-bottom: 1.5rem; font-size: 0.95rem; }
 
-    .btn-group { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
+    .btn-group { display: flex; flex-direction: column; gap: 0.75rem; }
     .btn {
       padding: 0.85rem 1.5rem; border-radius: 10px; border: 1px solid var(--border-color);
       background: white; color: var(--text-color); font-weight: 700; cursor: pointer;
@@ -43,6 +44,8 @@
     }
     .btn:hover { background: #f1f5f9; }
     .btn-primary { background: var(--primary-color); color: white; border: none; }
+    .btn-google { background: #ffffff; border: 1px solid #dadce0; color: #3c4043; }
+
     .hidden { display: none !important; }
 
     /* Forms */
@@ -63,7 +66,7 @@
     .tab-content { display: none; padding: 1.5rem; max-width: 600px; margin: 0 auto; }
     .tab-content.active { display: block; }
 
-    /* Home & Products Grid */
+    /* Products Grid */
     .home-search-area { margin-bottom: 1.5rem; }
     .search-box { display: flex; gap: 0.5rem; }
     .search-box input { flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; outline: none; }
@@ -80,7 +83,7 @@
     .product-desc { font-size: 0.85rem; color: var(--subtext-color); margin: 0.5rem 0; line-height: 1.4; }
     .product-vendor { font-size: 0.75rem; color: var(--subtext-color); border-top: 1px dashed var(--border-color); padding-top: 0.4rem; }
 
-    /* Vendor Dashboard Box */
+    /* Profile Header */
     .user-profile-header {
       display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--card-bg);
       border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 1.5rem;
@@ -99,6 +102,13 @@
     .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
     .badge-success { background: #dcfce7; color: #166534; }
 
+    .account-menu { display: flex; flex-direction: column; gap: 0.75rem; }
+    .menu-item {
+      display: flex; align-items: center; justify-content: space-between; padding: 1rem;
+      background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; font-weight: 500;
+    }
+    .menu-item.danger { color: #ef4444; border-color: #fecaca; }
+
     /* Bottom Nav */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--card-bg);
@@ -114,36 +124,64 @@
 </head>
 <body>
 
-  <!-- Modal: Add Product (شاشة إضافة المنتج المحدثة) -->
+  <!-- Modal 1: Select Language (يظهر أول ما تفتح الموقع) -->
+  <div id="lang-modal" class="modal-overlay">
+    <div class="modal-card">
+      <h2 id="modal-lang-title">سوق الكيلاني</h2>
+      <p id="modal-lang-desc">اختر اللغة / Select Language</p>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="setLanguage('ar')">العربية</button>
+        <button class="btn" onclick="setLanguage('en')">English</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Auth Login (يظهر بعد اختيار اللغة) -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2 id="auth-title">سوق الكيلاني</h2>
+      <p id="auth-desc">يرجى تسجيل الدخول أو التصفح كزائر</p>
+      <div class="btn-group">
+        <button class="btn btn-google" onclick="loginWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+          <span id="btn-google-text">تسجيل الدخول عبر Google</span>
+        </button>
+        <button class="btn btn-primary" onclick="testLoginPrompt()" id="btn-test">اختبار نوع الحساب (تجريبي)</button>
+        <button class="btn" id="btn-guest" onclick="handleGuestLogin()">التصفح كزائر / زبون</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add Product -->
   <div id="add-product-modal" class="modal-overlay hidden">
     <div class="modal-card">
-      <h2>إضافة منتج جديد لمتجرك</h2>
-      <p>أدخل بيانات المنتج والكمية المتاحة لترويجها للزبائن</p>
+      <h2 id="add-prod-title">إضافة منتج جديد لمتجرك</h2>
+      <p id="add-prod-desc">أدخل بيانات المنتج والكمية والوصف</p>
       
       <div class="form-group">
-        <label>اسم المنتج</label>
+        <label id="label-pname">اسم المنتج</label>
         <input type="text" id="prod-name" placeholder="مثال: هاتف سامسونج A54">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>السعر (ج.م)</label>
+          <label id="label-pprice">السعر (ج.م)</label>
           <input type="number" id="prod-price" placeholder="1000">
         </div>
         <div class="form-group">
-          <label>الكمية المتاحة</label>
+          <label id="label-pstock">الكمية المتاحة</label>
           <input type="number" id="prod-stock" placeholder="10">
         </div>
       </div>
 
       <div class="form-group">
-        <label>الوصف وتفاصيل المنتج</label>
-        <textarea id="prod-desc" rows="3" placeholder="اكتب وصف المنتج والضمان واللون وكل التفاصيل التي تود توضيحها للزبون..."></textarea>
+        <label id="label-pdesc">الوصف وتفاصيل المنتج</label>
+        <textarea id="prod-desc" rows="3" placeholder="اكتب وصف المنتج التفصيلي..."></textarea>
       </div>
 
       <div class="btn-group">
-        <button class="btn btn-primary" onclick="saveVendorProduct()">حفظ ونشر المنتج</button>
-        <button class="btn" onclick="closeProductModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveVendorProduct()" id="btn-save">حفظ ونشر المنتج</button>
+        <button class="btn" onclick="closeProductModal()" id="btn-cancel">إلغاء</button>
       </div>
     </div>
   </div>
@@ -151,81 +189,82 @@
   <!-- Header -->
   <header>
     <div class="header-top">
-      <div class="brand-title">سوق الكيلاني</div>
+      <div class="brand-title" id="app-title">سوق الكيلاني</div>
     </div>
   </header>
 
   <!-- Main View Screens -->
   <main>
-    <!-- Tab 1: Purchases -->
     <section id="tab-purchases" class="tab-content">
-      <h3>المشتريات</h3>
-      <div style="margin-top: 2rem; text-align: center; color: var(--subtext-color);">
+      <h3 id="title-purchases">المشتريات</h3>
+      <div id="no-purchases-text" style="margin-top: 2rem; text-align: center; color: var(--subtext-color);">
         لا توجد مشتريات حالياً.
       </div>
     </section>
 
-    <!-- Tab 2: Home -->
-    <section id="tab-home" class="tab-content">
+    <section id="tab-home" class="tab-content active">
       <div class="home-search-area">
         <div class="search-box">
-          <input type="text" placeholder="ابحث هنا عن منتجات...">
-          <button class="btn btn-primary" style="width:auto;">بحث</button>
+          <input type="text" id="search-input" placeholder="ابحث هنا عن منتجات...">
+          <button class="btn btn-primary" style="width:auto;" onclick="performSearch()" id="search-btn">بحث</button>
         </div>
       </div>
-      <h3>الرئيسية (معرض المنتجات)</h3>
-      <div id="products-container" class="products-grid">
-        <!-- المنتجات المعروضة تظهر هنا -->
-      </div>
+      <h3 id="title-home">الرئيسية (معرض المنتجات)</h3>
+      <div id="products-container" class="products-grid"></div>
     </section>
 
-    <!-- Tab 3: Account -->
-    <section id="tab-account" class="tab-content active">
-      <h3 style="margin-bottom: 1rem;">حسابي</h3>
+    <section id="tab-account" class="tab-content">
+      <h3 id="title-account" style="margin-bottom: 1rem;">حسابي</h3>
       
       <div class="user-profile-header">
-        <div class="account-avatar">م</div>
+        <div class="account-avatar" id="user-avatar-char">ز</div>
         <div class="account-info">
-          <div class="account-name">متجر البركة</div>
-          <div class="account-email">vendor1@gmail.com</div>
+          <div class="account-name" id="user-data-name">مستخدم زائر</div>
+          <div class="account-email" id="user-data-email">guest@kilany.com</div>
         </div>
-        <div style="color: var(--success-color); font-size: 0.8rem; font-weight: bold;">نشط</div>
+        <div style="color: var(--success-color); font-size: 0.8rem; font-weight: bold;" id="status-tag">نشط</div>
       </div>
 
-      <!-- Dashboard for Vendor -->
-      <div id="vendor-dashboard" class="vendor-card">
+      <div id="vendor-dashboard" class="vendor-card hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-          <strong>لوحة تحكم: متجر البركة</strong>
-          <span class="badge badge-success">اشتراك ساري</span>
+          <strong id="vendor-shop-name">لوحة تحكم التاجر</strong>
+          <span class="badge badge-success" id="badge-active-sub">اشتراك ساري</span>
         </div>
-        <p style="font-size: 0.85rem; color: var(--subtext-color); margin-bottom: 0.8rem;">
-          تاريخ انتهاء الاشتراك: 2026-12-31
+        <p style="font-size: 0.85rem; color: var(--subtext-color); margin-bottom: 0.8rem;" id="vendor-expiry-text">
+          تاريخ انتهاء الاشتراك: --
         </p>
-        <button class="btn btn-primary" onclick="openAddProductModal()">+ إضافة منتج جديد لصفحتي</button>
+        <button class="btn btn-primary" onclick="openAddProductModal()" id="btn-add-prod">+ إضافة منتج جديد لصفحتي</button>
+      </div>
+
+      <div class="account-menu">
+        <div class="menu-item" onclick="alert(currentLang === 'ar' ? 'بياناتي الشخصية' : 'Personal Info')"><span id="menu-profile">بياناتي الشخصية</span><span>&rsaquo;</span></div>
+        <div class="menu-item danger" onclick="logoutUser()"><span id="menu-logout">تسجيل الخروج</span><span>&times;</span></div>
       </div>
     </section>
   </main>
 
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
-    <button class="nav-item" onclick="switchTab('purchases')">
-      <span>المشتريات</span>
+    <button class="nav-item" onclick="switchTab('purchases')" id="nav-purchases">
+      <span id="label-nav-purchases">المشتريات</span>
     </button>
-    <button class="nav-item" onclick="switchTab('home')">
-      <span>الرئيسية</span>
+    <button class="nav-item active" onclick="switchTab('home')" id="nav-home">
+      <span id="label-nav-home">الرئيسية</span>
     </button>
-    <button class="nav-item active" onclick="switchTab('account')">
-      <span>حسابي</span>
+    <button class="nav-item" onclick="switchTab('account')" id="nav-account">
+      <span id="label-nav-account">حسابي</span>
     </button>
   </nav>
 
   <script>
-    // قائمة الألفاظ غير اللائقة الممنوعة (يمكنك إضافة أي كلمات جديدة إليها بسهولة)
-    const badWordsList = [
-      "غش", "نصب", "حرامي", "احتيال", "كاذب", "زبالة", "سيء جدا", "كلب", "حمار"
-    ];
+    const registeredVendors = {
+      "vendor1@gmail.com": { name: "متجر البركة", expDate: "2026-12-31" },
+      "01092242890@gmail.com": { name: "متجر الكيلاني الخديوي", expDate: "2026-06-01" },
+      "expired_vendor@gmail.com": { name: "متجر المنتهي", expDate: "2025-01-01" }
+    };
 
-    // دالة فحص وتصفية النصوص من الكلمات السيئة
+    const badWordsList = ["غش", "نصب", "حرامي", "احتيال", "كاذب", "زبالة", "سيء جدا", "كلب", "حمار"];
+
     function filterBadWords(text) {
       let cleanedText = text;
       badWordsList.forEach(word => {
@@ -237,30 +276,201 @@
 
     let allProducts = [
       { 
+        vendorEmail: "vendor1@gmail.com",
         name: "سماعة بلوتوث أصلية", 
         price: 350, 
         stock: 15,
-        desc: "سماعة صوت مجسم عالية الدقة مع بطارية تدوم حتى 24 ساعة وضمان لمدة سنة كاملة.", 
+        desc: "سماعة صوت مجسم عالية الدقة مع بطارية تدوم حتى 24 ساعة.", 
         vendorName: "متجر البركة" 
       }
     ];
 
-    function renderProducts() {
+    let currentLang = 'ar';
+    let currentUser = null;
+
+    const translations = {
+      ar: {
+        appTitle: "سوق الكيلاني",
+        authTitle: "سوق الكيلاني",
+        authDesc: "يرجى تسجيل الدخول أو التصفح كزائر",
+        googleText: "تسجيل الدخول عبر Google",
+        testText: "اختبار نوع الحساب (تجريبي)",
+        guestText: "التصفح كزائر / زبون",
+        searchPlaceholder: "ابحث هنا عن منتجات...",
+        searchBtn: "بحث",
+        titlePurchases: "المشتريات",
+        noPurchases: "لا توجد مشتريات حالياً.",
+        titleHome: "الرئيسية (معرض المنتجات)",
+        titleAccount: "حسابي",
+        statusActive: "نشط",
+        activeSub: "اشتراك ساري",
+        addProdBtn: "+ إضافة منتج جديد لصفحتي",
+        menuProfile: "بياناتي الشخصية",
+        menuLogout: "تسجيل الخروج",
+        navPurchases: "المشتريات",
+        navHome: "الرئيسية",
+        navAccount: "حسابي",
+        addProdTitle: "إضافة منتج جديد لمتجرك",
+        addProdDesc: "أدخل بيانات المنتج والكمية والوصف",
+        labelPName: "اسم المنتج",
+        labelPPrice: "السعر (ج.م)",
+        labelPStock: "الكمية المتاحة",
+        labelPDesc: "الوصف وتفاصيل المنتج",
+        btnSave: "حفظ ونشر المنتج",
+        btnCancel: "إلغاء"
+      },
+      en: {
+        appTitle: "El-Kilany Market",
+        authTitle: "El-Kilany Market",
+        authDesc: "Please sign in or browse as a guest",
+        googleText: "Sign in with Google",
+        testText: "Test Account Type (Demo)",
+        guestText: "Browse as Guest / Customer",
+        searchPlaceholder: "Search products here...",
+        searchBtn: "Search",
+        titlePurchases: "Purchases",
+        noPurchases: "No purchases found.",
+        titleHome: "Home (Products Feed)",
+        titleAccount: "My Account",
+        statusActive: "Active",
+        activeSub: "Active Subscription",
+        addProdBtn: "+ Add New Product",
+        menuProfile: "Personal Info",
+        menuLogout: "Log Out",
+        navPurchases: "Purchases",
+        navHome: "Home",
+        navAccount: "Account",
+        addProdTitle: "Add New Product",
+        addProdDesc: "Enter product details, stock and description",
+        labelPName: "Product Name",
+        labelPPrice: "Price (EGP)",
+        labelPStock: "Available Stock",
+        labelPDesc: "Description & Details",
+        btnSave: "Save & Publish",
+        btnCancel: "Cancel"
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const htmlEl = document.documentElement;
+      htmlEl.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      htmlEl.setAttribute('lang', lang);
+
+      const t = translations[lang];
+      document.getElementById('app-title').innerText = t.appTitle;
+      document.getElementById('auth-title').innerText = t.authTitle;
+      document.getElementById('auth-desc').innerText = t.authDesc;
+      document.getElementById('btn-google-text').innerText = t.googleText;
+      document.getElementById('btn-test').innerText = t.testText;
+      document.getElementById('btn-guest').innerText = t.guestText;
+      document.getElementById('search-input').placeholder = t.searchPlaceholder;
+      document.getElementById('search-btn').innerText = t.searchBtn;
+      document.getElementById('title-purchases').innerText = t.titlePurchases;
+      document.getElementById('no-purchases-text').innerText = t.noPurchases;
+      document.getElementById('title-home').innerText = t.titleHome;
+      document.getElementById('title-account').innerText = t.titleAccount;
+      document.getElementById('status-tag').innerText = t.statusActive;
+      document.getElementById('badge-active-sub').innerText = t.activeSub;
+      document.getElementById('btn-add-prod').innerText = t.addProdBtn;
+      document.getElementById('menu-profile').innerText = t.menuProfile;
+      document.getElementById('menu-logout').innerText = t.menuLogout;
+      document.getElementById('label-nav-purchases').innerText = t.navPurchases;
+      document.getElementById('label-nav-home').innerText = t.navHome;
+      document.getElementById('label-nav-account').innerText = t.navAccount;
+      document.getElementById('add-prod-title').innerText = t.addProdTitle;
+      document.getElementById('add-prod-desc').innerText = t.addProdDesc;
+      document.getElementById('label-pname').innerText = t.labelPName;
+      document.getElementById('label-pprice').innerText = t.labelPPrice;
+      document.getElementById('label-pstock').innerText = t.labelPStock;
+      document.getElementById('label-pdesc').innerText = t.labelPDesc;
+      document.getElementById('btn-save').innerText = t.btnSave;
+      document.getElementById('btn-cancel').innerText = t.btnCancel;
+
+      document.getElementById('lang-modal').classList.add('hidden');
+      document.getElementById('auth-modal').classList.remove('hidden');
+      renderActiveProducts();
+    }
+
+    function renderActiveProducts() {
+      const today = new Date().toISOString().split('T')[0];
       const container = document.getElementById('products-container');
       container.innerHTML = '';
-      allProducts.forEach(p => {
+
+      const activeProducts = allProducts.filter(p => {
+        const vendor = registeredVendors[p.vendorEmail];
+        return vendor && vendor.expDate >= today;
+      });
+
+      if (activeProducts.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color: var(--subtext-color); padding: 2rem;">${currentLang === 'ar' ? 'لا توجد منتجات معروضة حالياً.' : 'No products available.'}</div>`;
+        return;
+      }
+
+      activeProducts.forEach(prod => {
         container.innerHTML += `
           <div class="product-card">
-            <h4>${p.name}</h4>
-            <div class="product-price">${p.price} ج.م</div>
-            <div class="product-stock">الكمية المتاحة: ${p.stock} قطعة</div>
-            <div class="product-desc">${p.desc}</div>
-            <div class="product-vendor">بواسطة: ${p.vendorName}</div>
+            <h4>${prod.name}</h4>
+            <div class="product-price">${prod.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
+            <div class="product-stock">${currentLang === 'ar' ? 'الكمية: ' : 'Stock: '}${prod.stock}</div>
+            <div class="product-desc">${prod.desc}</div>
+            <div class="product-vendor">${currentLang === 'ar' ? 'بواسطة: ' : 'By: '}${prod.vendorName}</div>
           </div>
         `;
       });
     }
-    renderProducts();
+
+    function processLogin(email, name) {
+      const today = new Date().toISOString().split('T')[0];
+      const vendorData = registeredVendors[email];
+
+      if (vendorData && vendorData.expDate >= today) {
+        currentUser = { email, name: vendorData.name, isVendor: true, expDate: vendorData.expDate };
+        document.getElementById('vendor-dashboard').classList.remove('hidden');
+        document.getElementById('vendor-shop-name').innerText = (currentLang === 'ar' ? 'لوحة تحكم: ' : 'Dashboard: ') + vendorData.name;
+        document.getElementById('vendor-expiry-text').innerText = (currentLang === 'ar' ? 'تاريخ انتهاء الاشتراك: ' : 'Expiry Date: ') + vendorData.expDate;
+      } else {
+        currentUser = { email, name: name || (currentLang === 'ar' ? 'حساب زبون' : 'Customer Account'), isVendor: false };
+        document.getElementById('vendor-dashboard').classList.add('hidden');
+        if (vendorData && vendorData.expDate < today) {
+          alert(currentLang === 'ar' ? "تنبيه: انتهت مدة اشتراكك كتاجر وتحول حسابك لزبون." : "Notice: Your vendor subscription has expired.");
+        }
+      }
+
+      document.getElementById('user-data-name').innerText = currentUser.name;
+      document.getElementById('user-data-email').innerText = currentUser.email;
+      document.getElementById('user-avatar-char').innerText = currentUser.name.charAt(0);
+
+      renderActiveProducts();
+      document.getElementById('auth-modal').classList.add('hidden');
+      switchTab('home');
+    }
+
+    function testLoginPrompt() {
+      const choice = prompt(currentLang === 'ar' ? "اختر حساب للاختبار:\n1 - تاجر ساري\n2 - تاجر منتهي الاشتراك\n3 - زبون عادي" : "Choose test account:\n1 - Active Vendor\n2 - Expired Vendor\n3 - Customer");
+      if (choice === "1") processLogin("vendor1@gmail.com", "متجر البركة");
+      else if (choice === "2") processLogin("expired_vendor@gmail.com", "متجر المنتهي");
+      else if (choice === "3") processLogin("customer@gmail.com", "محمد علي");
+    }
+
+    function loginWithGoogle() {
+      alert(currentLang === 'ar' ? "يرجى ربط Client ID الحقيقي." : "Please link real Client ID.");
+    }
+
+    function handleGuestLogin() {
+      currentUser = null;
+      document.getElementById('vendor-dashboard').classList.add('hidden');
+      document.getElementById('user-data-name').innerText = currentLang === 'ar' ? "مستخدم زائر" : "Guest User";
+      document.getElementById('user-data-email').innerText = "guest@kilany.com";
+      renderActiveProducts();
+      document.getElementById('auth-modal').classList.add('hidden');
+      switchTab('home');
+    }
+
+    function logoutUser() {
+      alert(currentLang === 'ar' ? "تم تسجيل الخروج بنجاح." : "Logged out successfully.");
+      document.getElementById('auth-modal').classList.remove('hidden');
+    }
 
     function openAddProductModal() {
       document.getElementById('add-product-modal').classList.remove('hidden');
@@ -277,32 +487,31 @@
       let desc = document.getElementById('prod-desc').value.trim();
 
       if (!name || !price) {
-        alert("يرجى كتابة اسم المنتج والسعر على الأقل.");
+        alert(currentLang === 'ar' ? "يرجى كتابة اسم المنتج والسعر على الأقل." : "Please enter product name and price.");
         return;
       }
 
-      // فلترة الألفاظ والكلمات السيئة تلقائياً
       name = filterBadWords(name);
       desc = filterBadWords(desc);
 
       allProducts.push({
+        vendorEmail: currentUser.email,
         name: name,
         price: price,
         stock: stock,
-        desc: desc || "لا يوجد وصف إضافي.",
-        vendorName: "متجر البركة"
+        desc: desc || (currentLang === 'ar' ? "لا يوجد وصف." : "No description."),
+        vendorName: currentUser.name
       });
 
-      renderProducts();
+      renderActiveProducts();
       closeProductModal();
 
-      // إعادة تصفير الخانات
       document.getElementById('prod-name').value = '';
       document.getElementById('prod-price').value = '';
       document.getElementById('prod-stock').value = '';
       document.getElementById('prod-desc').value = '';
 
-      alert("تمت فلترة النص ونشر المنتج بنجاح في الصفحة الرئيسية!");
+      alert(currentLang === 'ar' ? "تمت فلترة النص ونشر المنتج بنجاح في الرئيسية!" : "Product published successfully!");
       switchTab('home');
     }
 
@@ -310,7 +519,12 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
-      event.currentTarget.classList.add('active');
+      document.getElementById(`nav-${tabName}`).classList.add('active');
+    }
+
+    function performSearch() {
+      const q = document.getElementById('search-input').value.trim();
+      if(q) alert((currentLang === 'ar' ? "جاري البحث عن: " : "Searching for: ") + q);
     }
   </script>
 </body>

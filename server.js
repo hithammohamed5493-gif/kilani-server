@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سوق الكيلاني | Souq El Kilany</title>
 <style>
-{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
+_{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
 body{background:#f7f7f7;color:#0a2e4f}
 .hidden{display:none!important}
 button{cursor:pointer;border:none}
@@ -31,7 +31,6 @@ button{cursor:pointer;border:none}
 .bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:12px 0 18px;border-top:1px solid #eee}
 .bottom button{background:none;font-size:14px;font-weight:700}
 .bottom button.active{color:#00a99d}
-/ Screens /
 .screen{min-height:100vh;padding-bottom:80px}
 .center{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px;text-align:center;background:#fff}
 .center h2{font-size:32px;margin:10px 0}

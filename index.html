@@ -77,6 +77,7 @@
       background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; text-align: right;
       display: flex; flex-direction: column; justify-content: space-between;
     }
+    .product-img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; background: #f1f5f9; }
     .product-card h4 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--text-color); }
     .product-price { color: var(--primary-color); font-weight: bold; font-size: 1.05rem; }
     .product-stock { font-size: 0.8rem; color: var(--success-color); font-weight: bold; margin: 0.3rem 0; }
@@ -153,7 +154,7 @@
     </div>
   </div>
 
-  <!-- Modal 3: Order Details (تفاصيل المنتج عند الضغط على "أطلب الآن") -->
+  <!-- Modal 3: Order Details -->
   <div id="order-modal" class="modal-overlay hidden">
     <div class="modal-card">
       <h2 id="order-modal-title" style="color: var(--primary-color);">تفاصيل المنتج</h2>
@@ -181,40 +182,6 @@
     </div>
   </div>
 
-  <!-- Modal 4: Add Product (للتاجر فقط) -->
-  <div id="add-product-modal" class="modal-overlay hidden">
-    <div class="modal-card">
-      <h2 id="add-prod-title">إضافة منتج جديد لمتجرك</h2>
-      <p id="add-prod-desc">أدخل بيانات المنتج والكمية والوصف</p>
-      
-      <div class="form-group">
-        <label id="label-pname">اسم المنتج</label>
-        <input type="text" id="prod-name" placeholder="مثال: هاتف سامسونج A54">
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label id="label-pprice">السعر (ج.م)</label>
-          <input type="number" id="prod-price" placeholder="1000">
-        </div>
-        <div class="form-group">
-          <label id="label-pstock">الكمية المتاحة</label>
-          <input type="number" id="prod-stock" placeholder="10">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label id="label-pdesc">الوصف وتفاصيل المنتج</label>
-        <textarea id="prod-desc" rows="3" placeholder="اكتب وصف المنتج التفصيلي..."></textarea>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="saveVendorProduct()" id="btn-save">حفظ ونشر المنتج</button>
-        <button class="btn" onclick="closeProductModal()" id="btn-cancel">إلغاء</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Header -->
   <header>
     <div class="header-top">
@@ -224,12 +191,10 @@
 
   <!-- Main View Screens -->
   <main>
-    <!-- Tab 1: Purchases / Orders List -->
+    <!-- Tab 1: Purchases -->
     <section id="tab-purchases" class="tab-content">
       <h3 id="title-purchases">المشتريات والطلبات</h3>
-      <div id="purchases-container" style="margin-top: 1rem;">
-        <!-- الطلبات المعالجة تظهر هنا تلقائياً -->
-      </div>
+      <div id="purchases-container" style="margin-top: 1rem;"></div>
     </section>
 
     <!-- Tab 2: Home Feed -->
@@ -257,17 +222,6 @@
         <div style="color: var(--success-color); font-size: 0.8rem; font-weight: bold;" id="status-tag">نشط</div>
       </div>
 
-      <div id="vendor-dashboard" class="vendor-card hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-          <strong id="vendor-shop-name">لوحة تحكم التاجر</strong>
-          <span class="badge badge-success" id="badge-active-sub">اشتراك ساري</span>
-        </div>
-        <p style="font-size: 0.85rem; color: var(--subtext-color); margin-bottom: 0.8rem;" id="vendor-expiry-text">
-          تاريخ انتهاء الاشتراك: --
-        </p>
-        <button class="btn btn-primary" onclick="openAddProductModal()" id="btn-add-prod">+ إضافة منتج جديد لصفحتي</button>
-      </div>
-
       <div class="account-menu">
         <div class="menu-item" onclick="alert(currentLang === 'ar' ? 'بياناتي الشخصية' : 'Personal Info')"><span id="menu-profile">بياناتي الشخصية</span><span>&rsaquo;</span></div>
         <div class="menu-item danger" onclick="logoutUser()"><span id="menu-logout">تسجيل الخروج</span><span>&times;</span></div>
@@ -289,39 +243,22 @@
   </nav>
 
   <script>
-    const registeredVendors = {
-      "vendor1@gmail.com": { name: "متجر البركة", expDate: "2026-12-31" },
-      "01092242890@gmail.com": { name: "متجر الكيلاني الخديوي", expDate: "2026-06-01" },
-      "expired_vendor@gmail.com": { name: "متجر المنتهي", expDate: "2025-01-01" }
-    };
-
-    const badWordsList = ["غش", "نصب", "حرامي", "احتيال", "كاذب", "زبالة", "سيء جدا", "كلب", "حمار"];
-
-    function filterBadWords(text) {
-      let cleanedText = text;
-      badWordsList.forEach(word => {
-        const regex = new RegExp(word, "gi");
-        cleanedText = cleanedText.replace(regex, "***");
-      });
-      return cleanedText;
-    }
-
-    let allProducts = [
+    // جلب المنتجات تلقائياً من التخزين المشترك مع لوحة الأدمن السرية
+    let allProducts = JSON.parse(localStorage.getItem('kilany_products')) || [
       { 
         id: 1,
-        vendorEmail: "vendor1@gmail.com",
         name: "سماعة بلوتوث أصلية", 
         price: 350, 
         stock: 15,
         desc: "سماعة صوت مجسم عالية الدقة مع بطارية تدوم حتى 24 ساعة وضمان سنة.", 
-        vendorName: "متجر البركة" 
+        vendorName: "متجر الكيلاني",
+        img: "" 
       }
     ];
 
-    let userOrders = []; // قائمة المشتريات
+    let userOrders = [];
     let selectedProdForOrder = null;
     let currentLang = 'ar';
-    let currentUser = null;
 
     const translations = {
       ar: {
@@ -337,23 +274,12 @@
         titleHome: "الرئيسية (معرض المنتجات)",
         titleAccount: "حسابي",
         statusActive: "نشط",
-        activeSub: "اشتراك ساري",
-        addProdBtn: "+ إضافة منتج جديد لصفحتي",
-        menuProfile: "بياناتي الشخصية",
-        menuLogout: "تسجيل الخروج",
         navPurchases: "المشتريات",
         navHome: "الرئيسية",
         navAccount: "حسابي",
-        addProdTitle: "إضافة منتج جديد لمتجرك",
-        addProdDesc: "أدخل بيانات المنتج والكمية والوصف",
-        labelPName: "اسم المنتج",
-        labelPPrice: "السعر (ج.م)",
-        labelPStock: "الكمية المتاحة",
-        labelPDesc: "الوصف وتفاصيل المنتج",
-        btnSave: "حفظ ونشر المنتج",
-        btnCancel: "إلغاء",
         orderNow: "أطلب الآن",
         confirmOrder: "تم إكمال الطلب",
+        btnCancel: "إلغاء",
         qtyLabel: "الكمية المطلوبة:"
       },
       en: {
@@ -369,23 +295,12 @@
         titleHome: "Home (Products Feed)",
         titleAccount: "My Account",
         statusActive: "Active",
-        activeSub: "Active Subscription",
-        addProdBtn: "+ Add New Product",
-        menuProfile: "Personal Info",
-        menuLogout: "Log Out",
         navPurchases: "Purchases",
         navHome: "Home",
         navAccount: "Account",
-        addProdTitle: "Add New Product",
-        addProdDesc: "Enter product details, stock and description",
-        labelPName: "Product Name",
-        labelPPrice: "Price (EGP)",
-        labelPStock: "Available Stock",
-        labelPDesc: "Description & Details",
-        btnSave: "Save & Publish",
-        btnCancel: "Cancel",
         orderNow: "Order Now",
         confirmOrder: "Complete Order",
+        btnCancel: "Cancel",
         qtyLabel: "Quantity Required:"
       }
     };
@@ -408,21 +323,9 @@
       document.getElementById('title-home').innerText = t.titleHome;
       document.getElementById('title-account').innerText = t.titleAccount;
       document.getElementById('status-tag').innerText = t.statusActive;
-      document.getElementById('badge-active-sub').innerText = t.activeSub;
-      document.getElementById('btn-add-prod').innerText = t.addProdBtn;
-      document.getElementById('menu-profile').innerText = t.menuProfile;
-      document.getElementById('menu-logout').innerText = t.menuLogout;
       document.getElementById('label-nav-purchases').innerText = t.navPurchases;
       document.getElementById('label-nav-home').innerText = t.navHome;
       document.getElementById('label-nav-account').innerText = t.navAccount;
-      document.getElementById('add-prod-title').innerText = t.addProdTitle;
-      document.getElementById('add-prod-desc').innerText = t.addProdDesc;
-      document.getElementById('label-pname').innerText = t.labelPName;
-      document.getElementById('label-pprice').innerText = t.labelPPrice;
-      document.getElementById('label-pstock').innerText = t.labelPStock;
-      document.getElementById('label-pdesc').innerText = t.labelPDesc;
-      document.getElementById('btn-save').innerText = t.btnSave;
-      document.getElementById('btn-cancel').innerText = t.btnCancel;
       document.getElementById('btn-confirm-order').innerText = t.confirmOrder;
       document.getElementById('btn-close-order').innerText = t.btnCancel;
       document.getElementById('label-quantity').innerText = t.qtyLabel;
@@ -434,14 +337,13 @@
     }
 
     function renderActiveProducts() {
-      const today = new Date().toISOString().split('T')[0];
+      // تحديث قائمة المنتجات من الذاكرة المحلية في كل مرة يتم العرض
+      allProducts = JSON.parse(localStorage.getItem('kilany_products')) || allProducts;
+      
       const container = document.getElementById('products-container');
       container.innerHTML = '';
 
-      const activeProducts = allProducts.filter(p => {
-        const vendor = registeredVendors[p.vendorEmail];
-        return vendor && vendor.expDate >= today && p.stock > 0;
-      });
+      const activeProducts = allProducts.filter(p => Number(p.stock) > 0);
 
       if (activeProducts.length === 0) {
         container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color: var(--subtext-color); padding: 2rem;">${currentLang === 'ar' ? 'لا توجد منتجات معروضة حالياً.' : 'No products available.'}</div>`;
@@ -449,13 +351,15 @@
       }
 
       activeProducts.forEach(prod => {
+        let imgTag = prod.img ? `<img src="${prod.img}" class="product-img" alt="${prod.name}">` : '';
         container.innerHTML += `
           <div class="product-card">
             <div>
+              ${imgTag}
               <h4>${prod.name}</h4>
               <div class="product-price">${prod.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
               <div class="product-stock">${currentLang === 'ar' ? 'المتاح: ' : 'Stock: '}${prod.stock}</div>
-              <div class="product-vendor">${currentLang === 'ar' ? 'بواسطة: ' : 'By: '}${prod.vendorName}</div>
+              <div class="product-vendor">${currentLang === 'ar' ? 'بواسطة: ' : 'By: '}${prod.vendorName || 'سوق الكيلاني'}</div>
             </div>
             <button class="btn btn-primary" onclick="openOrderModal(${prod.id})" style="margin-top: 0.5rem;">${translations[currentLang].orderNow}</button>
           </div>
@@ -468,7 +372,7 @@
       if (!selectedProdForOrder) return;
 
       document.getElementById('order-modal-title').innerText = selectedProdForOrder.name;
-      document.getElementById('order-prod-desc').innerText = selectedProdForOrder.desc;
+      document.getElementById('order-prod-desc').innerText = selectedProdForOrder.desc || "لا يوجد وصف.";
       document.getElementById('order-prod-price').innerText = `${selectedProdForOrder.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}`;
       document.getElementById('order-prod-stock').innerText = selectedProdForOrder.stock;
       document.getElementById('order-qty-input').value = 1;
@@ -488,16 +392,15 @@
         return;
       }
 
-      // خصم الكمية من المتجر
       selectedProdForOrder.stock -= qty;
+      localStorage.setItem('kilany_products', JSON.stringify(allProducts));
 
-      // إضافة الطلب إلى المشتريات
       userOrders.push({
         id: Date.now(),
         productName: selectedProdForOrder.name,
         qty: qty,
         totalPrice: selectedProdForOrder.price * qty,
-        vendorName: selectedProdForOrder.vendorName,
+        vendorName: selectedProdForOrder.vendorName || 'سوق الكيلاني',
         date: new Date().toLocaleTimeString('ar-EG')
       });
 
@@ -529,42 +432,12 @@
       });
     }
 
-    function processLogin(email, name) {
-      const today = new Date().toISOString().split('T')[0];
-      const vendorData = registeredVendors[email];
-
-      if (vendorData && vendorData.expDate >= today) {
-        currentUser = { email, name: vendorData.name, isVendor: true, expDate: vendorData.expDate };
-        document.getElementById('vendor-dashboard').classList.remove('hidden');
-        document.getElementById('vendor-shop-name').innerText = (currentLang === 'ar' ? 'لوحة تحكم: ' : 'Dashboard: ') + vendorData.name;
-        document.getElementById('vendor-expiry-text').innerText = (currentLang === 'ar' ? 'تاريخ انتهاء الاشتراك: ' : 'Expiry Date: ') + vendorData.expDate;
-      } else {
-        currentUser = { email, name: name || 'حساب زبون', isVendor: false };
-        document.getElementById('vendor-dashboard').classList.add('hidden');
-      }
-
-      document.getElementById('user-data-name').innerText = currentUser.name;
-      document.getElementById('user-data-email').innerText = currentUser.email;
-      document.getElementById('user-avatar-char').innerText = currentUser.name.charAt(0);
-
-      renderActiveProducts();
+    function testLoginPrompt() {
       document.getElementById('auth-modal').classList.add('hidden');
       switchTab('home');
     }
 
-    function testLoginPrompt() {
-      const choice = prompt("اختر حساب للاختبار:\n1 - تاجر ساري\n2 - تاجر منتهي\n3 - زبون عادي");
-      if (choice === "1") processLogin("vendor1@gmail.com", "متجر البركة");
-      else if (choice === "2") processLogin("expired_vendor@gmail.com", "متجر المنتهي");
-      else if (choice === "3") processLogin("customer@gmail.com", "محمد علي");
-    }
-
     function handleGuestLogin() {
-      currentUser = null;
-      document.getElementById('vendor-dashboard').classList.add('hidden');
-      document.getElementById('user-data-name').innerText = "مستخدم زائر";
-      document.getElementById('user-data-email').innerText = "guest@kilany.com";
-      renderActiveProducts();
       document.getElementById('auth-modal').classList.add('hidden');
       switchTab('home');
     }
@@ -574,60 +447,45 @@
       document.getElementById('auth-modal').classList.remove('hidden');
     }
 
-    function openAddProductModal() {
-      document.getElementById('add-product-modal').classList.remove('hidden');
-    }
-
-    function closeProductModal() {
-      document.getElementById('add-product-modal').classList.add('hidden');
-    }
-
-    function saveVendorProduct() {
-      let name = document.getElementById('prod-name').value.trim();
-      const price = document.getElementById('prod-price').value;
-      const stock = document.getElementById('prod-stock').value || 1;
-      let desc = document.getElementById('prod-desc').value.trim();
-
-      if (!name || !price) {
-        alert("يرجى كتابة اسم المنتج والسعر.");
-        return;
-      }
-
-      name = filterBadWords(name);
-      desc = filterBadWords(desc);
-
-      allProducts.push({
-        id: Date.now(),
-        vendorEmail: currentUser.email,
-        name: name,
-        price: price,
-        stock: stock,
-        desc: desc || "لا يوجد وصف.",
-        vendorName: currentUser.name
-      });
-
-      renderActiveProducts();
-      closeProductModal();
-
-      document.getElementById('prod-name').value = '';
-      document.getElementById('prod-price').value = '';
-      document.getElementById('prod-stock').value = '';
-      document.getElementById('prod-desc').value = '';
-
-      alert("تمت فلترة النص ونشر المنتج بنجاح!");
-      switchTab('home');
-    }
-
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
       document.getElementById(`nav-${tabName}`).classList.add('active');
+      if(tabName === 'home') {
+        renderActiveProducts();
+      }
     }
 
     function performSearch() {
-      const q = document.getElementById('search-input').value.trim();
-      if(q) alert("جاري البحث عن: " + q);
+      const q = document.getElementById('search-input').value.trim().toLowerCase();
+      if(!q) {
+        renderActiveProducts();
+        return;
+      }
+      const container = document.getElementById('products-container');
+      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(q));
+      
+      container.innerHTML = '';
+      if(filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color: var(--subtext-color); padding: 2rem;">لا توجد نتائج مطابقة للبحث.</div>`;
+        return;
+      }
+      filtered.forEach(prod => {
+        let imgTag = prod.img ? `<img src="${prod.img}" class="product-img" alt="${prod.name}">` : '';
+        container.innerHTML += `
+          <div class="product-card">
+            <div>
+              ${imgTag}
+              <h4>${prod.name}</h4>
+              <div class="product-price">${prod.price} ج.م</div>
+              <div class="product-stock">المتاح: ${prod.stock}</div>
+              <div class="product-vendor">بواسطة: ${prod.vendorName || 'سوق الكيلاني'}</div>
+            </div>
+            <button class="btn btn-primary" onclick="openOrderModal(${prod.id})" style="margin-top: 0.5rem;">أطلب الآن</button>
+          </div>
+        `;
+      });
     }
   </script>
 </body>

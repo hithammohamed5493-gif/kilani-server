@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>سوق الكيلاني | El-Kilany Market</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <style>
     :root {
@@ -17,6 +16,7 @@
       --subtext-color: #64748b;
       --border-color: #e2e8f0;
       --success-color: #16a34a;
+      --danger-color: #ef4444;
       --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
@@ -30,13 +30,13 @@
       display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;
     }
     .modal-card {
-      background: var(--card-bg); border-radius: 16px; padding: 2rem;
-      width: 100%; max-width: 400px; text-align: center; box-shadow: var(--shadow);
+      background: var(--card-bg); border-radius: 16px; padding: 1.8rem;
+      width: 100%; max-width: 420px; text-align: right; box-shadow: var(--shadow);
     }
-    .modal-card h2 { margin-bottom: 0.5rem; color: var(--primary-color); }
-    .modal-card p { color: var(--subtext-color); margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .modal-card h2 { margin-bottom: 0.5rem; color: var(--primary-color); text-align: center; }
+    .modal-card p { color: var(--subtext-color); margin-bottom: 1rem; font-size: 0.95rem; text-align: center; }
 
-    .btn-group { display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn-group { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem; }
     .btn {
       padding: 0.85rem 1.5rem; border-radius: 10px; border: 1px solid var(--border-color);
       background: white; color: var(--text-color); font-weight: 700; cursor: pointer;
@@ -44,8 +44,7 @@
     }
     .btn:hover { background: #f1f5f9; }
     .btn-primary { background: var(--primary-color); color: white; border: none; }
-    .btn-google { background: #ffffff; border: 1px solid #dadce0; color: #3c4043; }
-
+    .btn-success { background: var(--success-color); color: white; border: none; }
     .hidden { display: none !important; }
 
     /* Forms */
@@ -72,18 +71,24 @@
     .search-box input { flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 10px; outline: none; }
     
     .products-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin-top: 1rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; margin-top: 1rem;
     }
     .product-card {
       background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; text-align: right;
+      display: flex; flex-direction: column; justify-content: space-between;
     }
     .product-card h4 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--text-color); }
-    .product-price { color: var(--primary-color); font-weight: bold; font-size: 0.95rem; }
-    .product-stock { font-size: 0.8rem; color: var(--success-color); font-weight: bold; margin-top: 0.2rem; }
-    .product-desc { font-size: 0.85rem; color: var(--subtext-color); margin: 0.5rem 0; line-height: 1.4; }
-    .product-vendor { font-size: 0.75rem; color: var(--subtext-color); border-top: 1px dashed var(--border-color); padding-top: 0.4rem; }
+    .product-price { color: var(--primary-color); font-weight: bold; font-size: 1.05rem; }
+    .product-stock { font-size: 0.8rem; color: var(--success-color); font-weight: bold; margin: 0.3rem 0; }
+    .product-vendor { font-size: 0.75rem; color: var(--subtext-color); margin-bottom: 0.8rem; }
 
-    /* Profile Header */
+    /* Orders List */
+    .order-card {
+      background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: right;
+    }
+    .order-card h4 { color: var(--primary-color); margin-bottom: 0.4rem; }
+
+    /* Profile & Vendor Dashboard */
     .user-profile-header {
       display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--card-bg);
       border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 1.5rem;
@@ -124,11 +129,11 @@
 </head>
 <body>
 
-  <!-- Modal 1: Select Language (يظهر أول ما تفتح الموقع) -->
+  <!-- Modal 1: Select Language -->
   <div id="lang-modal" class="modal-overlay">
-    <div class="modal-card">
-      <h2 id="modal-lang-title">سوق الكيلاني</h2>
-      <p id="modal-lang-desc">اختر اللغة / Select Language</p>
+    <div class="modal-card" style="text-align: center;">
+      <h2>سوق الكيلاني</h2>
+      <p>اختر اللغة / Select Language</p>
       <div class="btn-group">
         <button class="btn btn-primary" onclick="setLanguage('ar')">العربية</button>
         <button class="btn" onclick="setLanguage('en')">English</button>
@@ -136,23 +141,47 @@
     </div>
   </div>
 
-  <!-- Modal 2: Auth Login (يظهر بعد اختيار اللغة) -->
+  <!-- Modal 2: Auth Login -->
   <div id="auth-modal" class="modal-overlay hidden">
-    <div class="modal-card">
+    <div class="modal-card" style="text-align: center;">
       <h2 id="auth-title">سوق الكيلاني</h2>
       <p id="auth-desc">يرجى تسجيل الدخول أو التصفح كزائر</p>
       <div class="btn-group">
-        <button class="btn btn-google" onclick="loginWithGoogle()">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
-          <span id="btn-google-text">تسجيل الدخول عبر Google</span>
-        </button>
         <button class="btn btn-primary" onclick="testLoginPrompt()" id="btn-test">اختبار نوع الحساب (تجريبي)</button>
         <button class="btn" id="btn-guest" onclick="handleGuestLogin()">التصفح كزائر / زبون</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal 3: Add Product -->
+  <!-- Modal 3: Order Details (تفاصيل المنتج عند الضغط على "أطلب الآن") -->
+  <div id="order-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2 id="order-modal-title" style="color: var(--primary-color);">تفاصيل المنتج</h2>
+      <hr style="margin: 0.8rem 0; border: none; border-top: 1px solid var(--border-color);">
+      
+      <div style="margin-bottom: 0.8rem;">
+        <label style="font-weight: bold; font-size: 0.85rem;">الوصف:</label>
+        <p id="order-prod-desc" style="text-align: right; color: var(--text-color); margin-top: 0.2rem; font-size: 0.9rem; line-height: 1.5;"></p>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-bottom: 0.8rem; font-size: 0.9rem;">
+        <span><strong>السعر:</strong> <span id="order-prod-price" style="color:var(--primary-color); font-weight:bold;"></span></span>
+        <span><strong>المتاح:</strong> <span id="order-prod-stock" style="color:var(--success-color); font-weight:bold;"></span></span>
+      </div>
+
+      <div class="form-group">
+        <label id="label-quantity">الكمية المطلوبة:</label>
+        <input type="number" id="order-qty-input" value="1" min="1">
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-success" onclick="confirmOrder()" id="btn-confirm-order">تم إكمال الطلب</button>
+        <button class="btn" onclick="closeOrderModal()" id="btn-close-order">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Add Product (للتاجر فقط) -->
   <div id="add-product-modal" class="modal-overlay hidden">
     <div class="modal-card">
       <h2 id="add-prod-title">إضافة منتج جديد لمتجرك</h2>
@@ -195,13 +224,15 @@
 
   <!-- Main View Screens -->
   <main>
+    <!-- Tab 1: Purchases / Orders List -->
     <section id="tab-purchases" class="tab-content">
-      <h3 id="title-purchases">المشتريات</h3>
-      <div id="no-purchases-text" style="margin-top: 2rem; text-align: center; color: var(--subtext-color);">
-        لا توجد مشتريات حالياً.
+      <h3 id="title-purchases">المشتريات والطلبات</h3>
+      <div id="purchases-container" style="margin-top: 1rem;">
+        <!-- الطلبات المعالجة تظهر هنا تلقائياً -->
       </div>
     </section>
 
+    <!-- Tab 2: Home Feed -->
     <section id="tab-home" class="tab-content active">
       <div class="home-search-area">
         <div class="search-box">
@@ -213,6 +244,7 @@
       <div id="products-container" class="products-grid"></div>
     </section>
 
+    <!-- Tab 3: Account -->
     <section id="tab-account" class="tab-content">
       <h3 id="title-account" style="margin-bottom: 1rem;">حسابي</h3>
       
@@ -276,15 +308,18 @@
 
     let allProducts = [
       { 
+        id: 1,
         vendorEmail: "vendor1@gmail.com",
         name: "سماعة بلوتوث أصلية", 
         price: 350, 
         stock: 15,
-        desc: "سماعة صوت مجسم عالية الدقة مع بطارية تدوم حتى 24 ساعة.", 
+        desc: "سماعة صوت مجسم عالية الدقة مع بطارية تدوم حتى 24 ساعة وضمان سنة.", 
         vendorName: "متجر البركة" 
       }
     ];
 
+    let userOrders = []; // قائمة المشتريات
+    let selectedProdForOrder = null;
     let currentLang = 'ar';
     let currentUser = null;
 
@@ -293,12 +328,11 @@
         appTitle: "سوق الكيلاني",
         authTitle: "سوق الكيلاني",
         authDesc: "يرجى تسجيل الدخول أو التصفح كزائر",
-        googleText: "تسجيل الدخول عبر Google",
         testText: "اختبار نوع الحساب (تجريبي)",
         guestText: "التصفح كزائر / زبون",
         searchPlaceholder: "ابحث هنا عن منتجات...",
         searchBtn: "بحث",
-        titlePurchases: "المشتريات",
+        titlePurchases: "المشتريات والطلبات",
         noPurchases: "لا توجد مشتريات حالياً.",
         titleHome: "الرئيسية (معرض المنتجات)",
         titleAccount: "حسابي",
@@ -317,18 +351,20 @@
         labelPStock: "الكمية المتاحة",
         labelPDesc: "الوصف وتفاصيل المنتج",
         btnSave: "حفظ ونشر المنتج",
-        btnCancel: "إلغاء"
+        btnCancel: "إلغاء",
+        orderNow: "أطلب الآن",
+        confirmOrder: "تم إكمال الطلب",
+        qtyLabel: "الكمية المطلوبة:"
       },
       en: {
         appTitle: "El-Kilany Market",
         authTitle: "El-Kilany Market",
         authDesc: "Please sign in or browse as a guest",
-        googleText: "Sign in with Google",
         testText: "Test Account Type (Demo)",
         guestText: "Browse as Guest / Customer",
         searchPlaceholder: "Search products here...",
         searchBtn: "Search",
-        titlePurchases: "Purchases",
+        titlePurchases: "My Orders & Purchases",
         noPurchases: "No purchases found.",
         titleHome: "Home (Products Feed)",
         titleAccount: "My Account",
@@ -347,7 +383,10 @@
         labelPStock: "Available Stock",
         labelPDesc: "Description & Details",
         btnSave: "Save & Publish",
-        btnCancel: "Cancel"
+        btnCancel: "Cancel",
+        orderNow: "Order Now",
+        confirmOrder: "Complete Order",
+        qtyLabel: "Quantity Required:"
       }
     };
 
@@ -361,13 +400,11 @@
       document.getElementById('app-title').innerText = t.appTitle;
       document.getElementById('auth-title').innerText = t.authTitle;
       document.getElementById('auth-desc').innerText = t.authDesc;
-      document.getElementById('btn-google-text').innerText = t.googleText;
       document.getElementById('btn-test').innerText = t.testText;
       document.getElementById('btn-guest').innerText = t.guestText;
       document.getElementById('search-input').placeholder = t.searchPlaceholder;
       document.getElementById('search-btn').innerText = t.searchBtn;
       document.getElementById('title-purchases').innerText = t.titlePurchases;
-      document.getElementById('no-purchases-text').innerText = t.noPurchases;
       document.getElementById('title-home').innerText = t.titleHome;
       document.getElementById('title-account').innerText = t.titleAccount;
       document.getElementById('status-tag').innerText = t.statusActive;
@@ -386,10 +423,14 @@
       document.getElementById('label-pdesc').innerText = t.labelPDesc;
       document.getElementById('btn-save').innerText = t.btnSave;
       document.getElementById('btn-cancel').innerText = t.btnCancel;
+      document.getElementById('btn-confirm-order').innerText = t.confirmOrder;
+      document.getElementById('btn-close-order').innerText = t.btnCancel;
+      document.getElementById('label-quantity').innerText = t.qtyLabel;
 
       document.getElementById('lang-modal').classList.add('hidden');
       document.getElementById('auth-modal').classList.remove('hidden');
       renderActiveProducts();
+      renderUserOrders();
     }
 
     function renderActiveProducts() {
@@ -399,7 +440,7 @@
 
       const activeProducts = allProducts.filter(p => {
         const vendor = registeredVendors[p.vendorEmail];
-        return vendor && vendor.expDate >= today;
+        return vendor && vendor.expDate >= today && p.stock > 0;
       });
 
       if (activeProducts.length === 0) {
@@ -410,11 +451,79 @@
       activeProducts.forEach(prod => {
         container.innerHTML += `
           <div class="product-card">
-            <h4>${prod.name}</h4>
-            <div class="product-price">${prod.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
-            <div class="product-stock">${currentLang === 'ar' ? 'الكمية: ' : 'Stock: '}${prod.stock}</div>
-            <div class="product-desc">${prod.desc}</div>
-            <div class="product-vendor">${currentLang === 'ar' ? 'بواسطة: ' : 'By: '}${prod.vendorName}</div>
+            <div>
+              <h4>${prod.name}</h4>
+              <div class="product-price">${prod.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
+              <div class="product-stock">${currentLang === 'ar' ? 'المتاح: ' : 'Stock: '}${prod.stock}</div>
+              <div class="product-vendor">${currentLang === 'ar' ? 'بواسطة: ' : 'By: '}${prod.vendorName}</div>
+            </div>
+            <button class="btn btn-primary" onclick="openOrderModal(${prod.id})" style="margin-top: 0.5rem;">${translations[currentLang].orderNow}</button>
+          </div>
+        `;
+      });
+    }
+
+    function openOrderModal(prodId) {
+      selectedProdForOrder = allProducts.find(p => p.id === prodId);
+      if (!selectedProdForOrder) return;
+
+      document.getElementById('order-modal-title').innerText = selectedProdForOrder.name;
+      document.getElementById('order-prod-desc').innerText = selectedProdForOrder.desc;
+      document.getElementById('order-prod-price').innerText = `${selectedProdForOrder.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}`;
+      document.getElementById('order-prod-stock').innerText = selectedProdForOrder.stock;
+      document.getElementById('order-qty-input').value = 1;
+      document.getElementById('order-qty-input').max = selectedProdForOrder.stock;
+
+      document.getElementById('order-modal').classList.remove('hidden');
+    }
+
+    function closeOrderModal() {
+      document.getElementById('order-modal').classList.add('hidden');
+    }
+
+    function confirmOrder() {
+      const qty = parseInt(document.getElementById('order-qty-input').value);
+      if (!qty || qty <= 0 || qty > selectedProdForOrder.stock) {
+        alert(currentLang === 'ar' ? "يرجى تحديد كمية صالحة ومتاحة." : "Please select a valid quantity.");
+        return;
+      }
+
+      // خصم الكمية من المتجر
+      selectedProdForOrder.stock -= qty;
+
+      // إضافة الطلب إلى المشتريات
+      userOrders.push({
+        id: Date.now(),
+        productName: selectedProdForOrder.name,
+        qty: qty,
+        totalPrice: selectedProdForOrder.price * qty,
+        vendorName: selectedProdForOrder.vendorName,
+        date: new Date().toLocaleTimeString('ar-EG')
+      });
+
+      alert(currentLang === 'ar' ? "تم إكمال الطلب بنجاح وإضافته إلى قائمة مشترياتك!" : "Order completed and added to purchases!");
+      
+      closeOrderModal();
+      renderActiveProducts();
+      renderUserOrders();
+      switchTab('purchases');
+    }
+
+    function renderUserOrders() {
+      const container = document.getElementById('purchases-container');
+      container.innerHTML = '';
+
+      if (userOrders.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color: var(--subtext-color); padding: 2rem;">${translations[currentLang].noPurchases}</div>`;
+        return;
+      }
+
+      userOrders.forEach(order => {
+        container.innerHTML += `
+          <div class="order-card">
+            <h4>${order.productName}</h4>
+            <div style="font-size:0.9rem;">الكمية: <strong>${order.qty}</strong> | الإجمالي: <strong style="color:var(--primary-color);">${order.totalPrice} ج.م</strong></div>
+            <div style="font-size:0.8rem; color:var(--subtext-color); margin-top:0.3rem;">من متجر: ${order.vendorName} (الوقت: ${order.date})</div>
           </div>
         `;
       });
@@ -430,11 +539,8 @@
         document.getElementById('vendor-shop-name').innerText = (currentLang === 'ar' ? 'لوحة تحكم: ' : 'Dashboard: ') + vendorData.name;
         document.getElementById('vendor-expiry-text').innerText = (currentLang === 'ar' ? 'تاريخ انتهاء الاشتراك: ' : 'Expiry Date: ') + vendorData.expDate;
       } else {
-        currentUser = { email, name: name || (currentLang === 'ar' ? 'حساب زبون' : 'Customer Account'), isVendor: false };
+        currentUser = { email, name: name || 'حساب زبون', isVendor: false };
         document.getElementById('vendor-dashboard').classList.add('hidden');
-        if (vendorData && vendorData.expDate < today) {
-          alert(currentLang === 'ar' ? "تنبيه: انتهت مدة اشتراكك كتاجر وتحول حسابك لزبون." : "Notice: Your vendor subscription has expired.");
-        }
       }
 
       document.getElementById('user-data-name').innerText = currentUser.name;
@@ -447,20 +553,16 @@
     }
 
     function testLoginPrompt() {
-      const choice = prompt(currentLang === 'ar' ? "اختر حساب للاختبار:\n1 - تاجر ساري\n2 - تاجر منتهي الاشتراك\n3 - زبون عادي" : "Choose test account:\n1 - Active Vendor\n2 - Expired Vendor\n3 - Customer");
+      const choice = prompt("اختر حساب للاختبار:\n1 - تاجر ساري\n2 - تاجر منتهي\n3 - زبون عادي");
       if (choice === "1") processLogin("vendor1@gmail.com", "متجر البركة");
       else if (choice === "2") processLogin("expired_vendor@gmail.com", "متجر المنتهي");
       else if (choice === "3") processLogin("customer@gmail.com", "محمد علي");
     }
 
-    function loginWithGoogle() {
-      alert(currentLang === 'ar' ? "يرجى ربط Client ID الحقيقي." : "Please link real Client ID.");
-    }
-
     function handleGuestLogin() {
       currentUser = null;
       document.getElementById('vendor-dashboard').classList.add('hidden');
-      document.getElementById('user-data-name').innerText = currentLang === 'ar' ? "مستخدم زائر" : "Guest User";
+      document.getElementById('user-data-name').innerText = "مستخدم زائر";
       document.getElementById('user-data-email').innerText = "guest@kilany.com";
       renderActiveProducts();
       document.getElementById('auth-modal').classList.add('hidden');
@@ -468,7 +570,7 @@
     }
 
     function logoutUser() {
-      alert(currentLang === 'ar' ? "تم تسجيل الخروج بنجاح." : "Logged out successfully.");
+      alert("تم تسجيل الخروج بنجاح.");
       document.getElementById('auth-modal').classList.remove('hidden');
     }
 
@@ -487,7 +589,7 @@
       let desc = document.getElementById('prod-desc').value.trim();
 
       if (!name || !price) {
-        alert(currentLang === 'ar' ? "يرجى كتابة اسم المنتج والسعر على الأقل." : "Please enter product name and price.");
+        alert("يرجى كتابة اسم المنتج والسعر.");
         return;
       }
 
@@ -495,11 +597,12 @@
       desc = filterBadWords(desc);
 
       allProducts.push({
+        id: Date.now(),
         vendorEmail: currentUser.email,
         name: name,
         price: price,
         stock: stock,
-        desc: desc || (currentLang === 'ar' ? "لا يوجد وصف." : "No description."),
+        desc: desc || "لا يوجد وصف.",
         vendorName: currentUser.name
       });
 
@@ -511,7 +614,7 @@
       document.getElementById('prod-stock').value = '';
       document.getElementById('prod-desc').value = '';
 
-      alert(currentLang === 'ar' ? "تمت فلترة النص ونشر المنتج بنجاح في الرئيسية!" : "Product published successfully!");
+      alert("تمت فلترة النص ونشر المنتج بنجاح!");
       switchTab('home');
     }
 
@@ -524,7 +627,7 @@
 
     function performSearch() {
       const q = document.getElementById('search-input').value.trim();
-      if(q) alert((currentLang === 'ar' ? "جاري البحث عن: " : "Searching for: ") + q);
+      if(q) alert("جاري البحث عن: " + q);
     }
   </script>
 </body>
